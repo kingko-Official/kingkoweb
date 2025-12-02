@@ -54,9 +54,9 @@
 const { isDark, toggleDarkMode } = useDarkMode()
 
 useHead({
-  title: 'KingkoWeb',
+  title: 'Kingko',
   meta: [
-    { name: 'description', content: 'KingkoWeb Homepage' }
+    { name: 'description', content: 'Kingko Homepage' }
   ],
   link: [
     { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
