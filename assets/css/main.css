@@ -18,7 +18,7 @@
 
 body {
   font-family: var(--font-family);
-  background-color: var(--background-color);
+  background-color: #e8e8e8; /* Match BackgroundEffect default (light theme) */
   color: var(--text-color);
   line-height: 1.6;
   overflow-x: hidden;
