@@ -20,8 +20,6 @@ const DOT_SPACING = 40 // Spacing between dots
 const DOT_RADIUS = 2 // Base radius of dots
 const MAX_RADIUS = 6 // Max radius when magnified
 const EFFECT_RADIUS = 300 // Radius of influence for the mouse
-const BASE_COLOR = 'rgba(0, 255, 255, 0.2)' // Cyan, low opacity
-const ACTIVE_COLOR = 'rgba(0, 255, 255, 1)' // Cyan, high opacity
 
 interface Dot {
   x: number
@@ -37,7 +35,6 @@ const initDots = () => {
   dots = []
   for (let x = 0; x < width; x += DOT_SPACING) {
     for (let y = 0; y < height; y += DOT_SPACING) {
-      // Add some offset to make it look less rigid if desired, but grid is fine for "fisheye" clarity
       dots.push({
         x,
         y,
@@ -66,7 +63,7 @@ const draw = () => {
   if (!ctx || !canvas.value) return
   ctx.clearRect(0, 0, width, height)
 
-  // Background color: Switch based on dark mode - softer light mode
+  // Background color: Switch based on dark mode
   ctx.fillStyle = props.isDark ? '#1a1a1a' : '#e8e8e8'
   ctx.fillRect(0, 0, width, height)
 
@@ -81,12 +78,6 @@ const draw = () => {
     if (dist < EFFECT_RADIUS) {
       // Calculate effect intensity (0 to 1)
       const intensity = 1 - dist / EFFECT_RADIUS
-      
-      // Fisheye effect: Move dot away from mouse slightly to simulate lens? 
-      // Or just magnify in place? Prompt says "fisheye style magnify", usually implies distortion + magnification.
-      // Let's stick to simple magnification in place for now to keep it stable, 
-      // or slight displacement if "fisheye" implies geometric distortion.
-      // Simple magnification is usually what people mean by "magnify near mouse".
       
       radius = DOT_RADIUS + (MAX_RADIUS - DOT_RADIUS) * intensity
       

@@ -1,7 +1,12 @@
 <template>
   <div class="home-page">
     <!-- Dark Mode Toggle Button -->
-    <button @click="toggleDarkMode" class="theme-toggle" :class="{ 'dark': isDark }">
+    <button 
+      ref="themeToggleBtn"
+      @click="toggleDarkMode" 
+      class="theme-toggle" 
+      :class="{ 'dark': isDark, 'expanded': isButtonExpanded }"
+    >
       <svg v-if="!isDark" class="toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
       </svg>
@@ -51,7 +56,88 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+
 const { isDark, toggleDarkMode } = useDarkMode()
+
+const themeToggleBtn = ref(null)
+const isButtonExpanded = ref(false)
+let hideTimeout = null
+let isAnimating = false
+
+// Handle mouse movement
+const handleMouseMove = (e) => {
+  if (!themeToggleBtn.value) return
+  
+  const btn = themeToggleBtn.value
+  const rect = btn.getBoundingClientRect()
+  
+  // Check if mouse is over the visible half of the button (when collapsed)
+  // The button is 50px wide, positioned at right: -25px, so only 25px is visible
+  const mouseX = e.clientX
+  const mouseY = e.clientY
+  
+  // Check if mouse is in the button area (including the hidden part)
+  const isOverButton = 
+    mouseX >= rect.left && 
+    mouseX <= rect.right && 
+    mouseY >= rect.top && 
+    mouseY <= rect.bottom
+  
+  if (!isButtonExpanded.value && isOverButton && !isAnimating) {
+    // Mouse is over the exposed half, expand the button
+    isButtonExpanded.value = true
+    isAnimating = true
+    
+    // Clear any pending hide timeout
+    if (hideTimeout) {
+      clearTimeout(hideTimeout)
+      hideTimeout = null
+    }
+    
+    // After animation completes, start checking if mouse is still on button
+    setTimeout(() => {
+      isAnimating = false
+      // Check if mouse is still over button
+      if (!isOverButton) {
+        scheduleHide()
+      }
+    }, 400) // Match the CSS transition duration
+  } else if (isButtonExpanded.value && !isAnimating && !isOverButton) {
+    // Mouse left the button, schedule auto-hide
+    scheduleHide()
+  } else if (isButtonExpanded.value && !isAnimating && isOverButton) {
+    // Mouse is back on button, cancel hide
+    if (hideTimeout) {
+      clearTimeout(hideTimeout)
+      hideTimeout = null
+    }
+  }
+}
+
+const scheduleHide = () => {
+  // Clear existing timeout
+  if (hideTimeout) {
+    clearTimeout(hideTimeout)
+  }
+  
+  // Schedule hide after 500ms
+  hideTimeout = setTimeout(() => {
+    isButtonExpanded.value = false
+    hideTimeout = null
+  }, 500)
+}
+
+onMounted(() => {
+  window.addEventListener('mousemove', handleMouseMove)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('mousemove', handleMouseMove)
+  if (hideTimeout) {
+    clearTimeout(hideTimeout)
+  }
+})
 
 useHead({
   title: 'Kingko',
@@ -80,7 +166,7 @@ useHead({
 .theme-toggle {
   position: fixed;
   top: 2rem;
-  right: 2rem;
+  right: -25px; /* Half hidden by default */
   width: 50px;
   height: 50px;
   border-radius: 50%;
@@ -91,12 +177,19 @@ useHead({
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
+  transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1), 
+              transform 0.3s ease,
+              box-shadow 0.3s ease;
   z-index: 1000;
 }
 
-.theme-toggle:hover {
-  transform: scale(1.1);
+/* Expanded state controlled by JavaScript */
+.theme-toggle.expanded {
+  right: 2rem; /* Slide out to full view */
+}
+
+.theme-toggle.expanded:hover {
+  transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
@@ -122,6 +215,8 @@ useHead({
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  z-index: 10; /* Above transition overlay */
 }
 
 .white-card {
