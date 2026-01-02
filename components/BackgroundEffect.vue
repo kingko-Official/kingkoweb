@@ -116,7 +116,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .background-canvas {
-  position: fixed;
+  position: absolute; /* 改为 absolute，只在父容器内 */
   top: 0;
   left: 0;
   width: 100%;
