@@ -661,7 +661,7 @@
     --space: 200px;
 
     opacity: calc(((var(--hyp) * 0.7) + 0.2) * var(--o)) !important;
-    clip-path: inset(2.8% 4% round 2.55% / 1.5%);
+    /*clip-path: inset(2.8% 4% round 2.55% / 1.5%);*/
 
     background-image: repeating-linear-gradient(55deg,
             rgb(255, 161, 158) calc(var(--space) * 1),
@@ -755,7 +755,7 @@
     content: "";
     z-index: 3;
     grid-area: 1/1;
-    clip-path: inset(2.8% 4% round 2.55% / 1.5%);
+    /*clip-path: inset(2.8% 4% round 2.55% / 1.5%);*/
 
     background-image: radial-gradient(farthest-corner ellipse at calc(((var(--mx)) * 0.5) + 25%) calc(((var(--my)) * 0.5) + 25%),
             rgba(100, 100, 100, 0.5) 5%,
