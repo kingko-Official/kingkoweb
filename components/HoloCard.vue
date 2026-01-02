@@ -255,13 +255,18 @@ const handleMouseLeave = () => {
 }
 
 .card__shine {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  grid-area: 1/1;
-  border-radius: var(--radius);
-  opacity: var(--o);
-  mix-blend-mode: color-dodge;
-  pointer-events: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    grid-area: 1/1;
+    border-radius: var(--radius); 
+    opacity: var(--o);
+    mix-blend-mode: color-dodge;
+    pointer-events: none;
+    overflow: hidden;  
+}
+
+.card__shine::after {
+    border-radius: var(--radius);  
 }
 </style>

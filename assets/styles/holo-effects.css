@@ -252,7 +252,7 @@
     --bar-color: rgba(255, 255, 255, 0.6);
     --bar-bg: rgb(10, 10, 10);
 
-    clip-path: inset(10% 8.5% 52.5% 8.5%);
+    /*clip-path: inset(10% 8.5% 52.5% 8.5%);*/
 
     background-image: url("https://res.cloudinary.com/simey/image/upload/Dev/PokemonCards/galaxy.png"),
         url("https://res.cloudinary.com/simey/image/upload/Dev/PokemonCards/galaxy.png"),
