@@ -7,7 +7,11 @@
   >
     <div 
       class="card" 
-      :class="{ 'active': isActive, 'interacting': isInteracting }"
+      :class="{ 
+        'active': isActive, 
+        'interacting': isInteracting,
+        'static': !isActive  /* ✅ 新增：静态状态类 */
+      }"
       :data-rarity="currentEffect"
       :data-supertype="supertype"
       :data-subtypes="subtypes"
@@ -76,6 +80,7 @@ const ry = ref(0)
 const posx = ref(50)
 const posy = ref(50)
 const hyp = ref(0)
+const opacity = ref(0)  // ✅ 新增：控制遮罩透明度
 
 const currentEffect = computed(() => props.effectType)
 
@@ -88,7 +93,8 @@ const cardStyle = computed(() => ({
   '--ry': `${ry.value}deg`,
   '--posx': `${posx.value}%`,
   '--posy': `${posy.value}%`,
-  '--hyp': hyp.value
+  '--hyp': hyp.value,
+  '--o': opacity.value  // ✅ 新增：透明度变量
 }))
 
 const handleMouseMove = (e) => {
@@ -126,22 +132,26 @@ const handleMouseMove = (e) => {
 const handleMouseEnter = () => {
   isActive.value = true
   isInteracting.value = true
+  opacity.value = 1  // ✅ 显示遮罩
 }
 
 const handleMouseLeave = () => {
   isActive.value = false
   isInteracting.value = false
   
-  // 重置所有变换
-  mx.value = 50
-  my.value = 50
-  tx.value = 0
-  ty.value = 0
-  rx.value = 0
-  ry.value = 0
-  posx.value = 50
-  posy.value = 50
-  hyp.value = 0
+  // ✅ 添加过渡动画，平滑复原
+  setTimeout(() => {
+    opacity.value = 0  // ✅ 隐藏遮罩
+    mx.value = 50
+    my.value = 50
+    tx.value = 0
+    ty.value = 0
+    rx.value = 0
+    ry.value = 0
+    posx.value = 50
+    posy.value = 50
+    hyp.value = 0
+  }, 100)
 }
 </script>
 
@@ -156,7 +166,7 @@ const handleMouseLeave = () => {
 .card {
   --radius: 4.55% / 3.5%;
   --s: 1;
-  --o: 1;
+  --o: 0;  /* ✅ 默认透明度为 0 */
   
   width: 100%;
   height: 100%;
@@ -194,7 +204,8 @@ const handleMouseLeave = () => {
   box-shadow: 0px 10px 20px -5px black;
   border-radius: var(--radius);
   outline: none;
-  transition: box-shadow 0.4s ease, outline 0.2s ease, transform 0.1s ease-out;
+  transition: box-shadow 0.4s ease, outline 0.2s ease, transform 0.3s ease-out;  /* ✅ 增加过渡时间 */
+  overflow: hidden;  /* ✅ 裁剪溢出 */
 }
 
 .card.active .card__rotator {
@@ -215,6 +226,7 @@ const handleMouseLeave = () => {
 .card__back {
   backface-visibility: hidden;
   overflow: hidden;
+  border-radius: var(--radius);
 }
 
 .card__back {
@@ -255,18 +267,28 @@ const handleMouseLeave = () => {
 }
 
 .card__shine {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    grid-area: 1/1;
-    border-radius: var(--radius); 
-    opacity: var(--o);
-    mix-blend-mode: color-dodge;
-    pointer-events: none;
-    overflow: hidden;  
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  grid-area: 1/1;
+  border-radius: var(--radius);
+  opacity: var(--o);  /* ✅ 使用动态透明度 */
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+  overflow: hidden;
+  transition: opacity 0.3s ease-out;  /* ✅ 平滑过渡 */
 }
 
+/* ✅ 静态状态下完全隐藏遮罩 */
+.card.static .card__shine {
+  opacity: 0 !important;
+  visibility: hidden;
+}
+
+/* ✅ 确保伪元素也有圆角和裁剪 */
+.card__shine::before,
 .card__shine::after {
-    border-radius: var(--radius);  
+  border-radius: inherit;
+  overflow: hidden;
 }
 </style>

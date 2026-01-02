@@ -727,8 +727,9 @@
     mix-blend-mode: color-dodge;
 }
 
-.card[data-rarity*="radiant"] .card__shine:after {
+/*.card[data-rarity*="radiant"] .card__shine:after {
     content: "";
+    clip-path: inset(2.8% 4% round 2.55% / 1.5%);
 
     background-image: url("https://res.cloudinary.com/simey/image/upload/Dev/PokemonCards/rainbow2.jpg"),
         repeating-linear-gradient(55deg,
@@ -748,12 +749,13 @@
     mix-blend-mode: soft-light;
 
     background-blend-mode: multiply;
-}
+}*/
 
 .card[data-rarity*="radiant"] .card__shine:before {
     content: "";
     z-index: 3;
     grid-area: 1/1;
+    clip-path: inset(2.8% 4% round 2.55% / 1.5%);
 
     background-image: radial-gradient(farthest-corner ellipse at calc(((var(--mx)) * 0.5) + 25%) calc(((var(--my)) * 0.5) + 25%),
             rgba(100, 100, 100, 0.5) 5%,
